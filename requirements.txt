@@ -1,0 +1,4 @@
+openai==1.14.3
+tenacity
+notebook
+ipykernel
