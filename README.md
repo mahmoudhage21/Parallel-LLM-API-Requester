@@ -2,6 +2,11 @@
 
 The purpose of this code is to make parallel requests to the Azure OpenAI API for chat completions, effectively managing rate limits and ensuring robust error handling. It's designed for scenarios where multiple inputs need to be processed simultaneously, reducing the overall time required to obtain responses from the API.
 
+## Acknowledgments
+
+This repository utilizes the Azure OpenAI API endpoint provided by the Max Planck Institute for Human Development, Center for Humans and Machines. I extend my gratitude for providing the resources that facilitated the development of this repository.
+
+For more information on their work and further research, please visit their [GitHub](https://github.com/center-for-humans-and-machines) and [official website](https://www.mpib-berlin.mpg.de/chm):
 
 ## Set Up a Virtual Environment as a kernel in Jupyter Notebook (macOS)
 
