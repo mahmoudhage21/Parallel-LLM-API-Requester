@@ -55,8 +55,8 @@ To use this implementation, structure your input data as follows and utilize the
 Instantiate the APIRequestor class and call the get_responses_parallel method with your input data:
 
 ```bash
-player = APIRequestor(model_name = "gpt-35-turbo", temperature = 1.0, max_tokens = 20, rate_limit = 100) 
-results = player.get_responses_parallel(message_sequences)
+gpt35_turbo_api = APIRequester(model_name = "gpt-35-turbo", temperature = 1.0, max_tokens = 20, rate_limit = 100) 
+results = gpt35_turbo_api.get_responses_parallel(message_sequences)
 results[:2]
 ```
 
