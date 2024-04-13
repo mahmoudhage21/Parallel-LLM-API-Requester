@@ -52,7 +52,7 @@ To use this implementation, structure your input data as follows and utilize the
 
 ### Sample Class Usage
 
-Instantiate the APIRequestor class and call the get_responses_parallel method with your input data:
+Instantiate the APIRequester class and call the get_responses_parallel method with your input data:
 
 ```bash
 gpt35_turbo_api = APIRequester(model_name = "gpt-35-turbo", temperature = 1.0, max_tokens = 20, rate_limit = 100) 
@@ -63,8 +63,8 @@ results[:2]
 Each result is saved as a dictionary with input (the user's request message) and content (the response from the API), maintaining the relationship between each request and its corresponding response.
 
 ```bash
-[{'input': 'What is 53 + 53?', 'content': '106'},
- {'input': 'What is 100 + 100?', 'content': '200'}]
+[{'input': 'What is 53 + 53?', 'content': '{"content": "106"}'},
+ {'input': 'What is 100 + 100?', 'content': '{"content": "200"}'}]
 ```
 
 ### Key Features
