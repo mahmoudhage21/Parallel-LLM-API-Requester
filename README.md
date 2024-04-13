@@ -1,16 +1,27 @@
+# Azure OpenAI Parallel Requests Handler
+
+This project simplifies making parallel requests to the Azure OpenAI API for chat completions of scenarios where one needs to batch process a large number of **prepared prompts simultaneously**.
 
 
-The purpose of this code is to make parallel requests to the Azure OpenAI API for chat completions, effectively managing rate limits and ensuring robust error handling. It's designed for scenarios where multiple inputs need to be processed simultaneously, reducing the overall time required to obtain responses from the API.
 
-## Acknowledgments
+This project efficiently manages rate limits and incorporates robust error handling to streamline processing multiple inputs simultaneously. Unlike the official OpenAI parallel implementation, which can be complex and cumbersome for beginners, this project offers a simplified, easy-to-understand approach.
 
-This repository utilizes the Azure OpenAI API endpoint provided by the Max Planck Institute for Human Development, Center for Humans and Machines. I extend my gratitude for providing the resources that facilitated the development of this repository.
+## Example
 
-For more information on their work and further research, please visit their [GitHub](https://github.com/center-for-humans-and-machines) and [official website](https://www.mpib-berlin.mpg.de/chm):
+For a very simple scenario where the data consists of 100 requests asking simple questions such as `What is 1+1?`, `What is 5+5?`, processing these requests one by one took about 18.6 seconds 🛵. However, using the parallel processing method, this time was significantly reduced to approximately 2.6 seconds 🏎️, making it 7 times faster.
 
-## Set Up a Virtual Environment as a kernel in Jupyter Notebook (macOS)
 
-Python version: 3.11.4
+So hit it with more complex requests and larger datasets, and watch this method flexes its muscles, shaving off loads of time and zipping through tasks like a rocket booster 🚀
+
+## Requirements
+
+- API key from Azure OpenAI
+- Store the API key in a file named .env `AZURE_OPENAI_API_KEY = <your_token>`
+
+## Installation
+
+Set up a virtual environment (macOS) as a kernel in Jupyter Notebook by installing the required packages to get started with this project:
+
 ```bash
 python -m venv myenv
 
@@ -21,54 +32,59 @@ pip install -r requirements.txt
 python -m ipykernel install --user --name=myenv --display-name="Python 3.11 (myenv)"
 ```
 
+## Usage
 
-## Implementation Overview
+To use this implementation, structure your input data as follows and utilize the provided APIPlayer class to handle parallel requests:
 
 ### Data Format Example
 
-The input data, should be structured as a list of message dictionaries, where each message has a `role` (either "system" or "user") and `content`. Here’s a very simple example:
-
 ```bash
 [
- [{'role': 'system', 'content': "You are a helpful AI assistant.  Always answer in the following json format: {'content': '2'}."},
-  {'role': 'user', 'content': 'What is 1 + 1?'}],
+ [{'role': 'system', 'content': "<Replace this with your desired system msg>"},
+  {'role': 'user', 'content': '<Replace this with your desired user msg>'}],
 
- [{'role': 'system', 'content': "You are a helpful AI assistant.  Always answer in the following json format: {'content': '2'}."},
-  {'role': 'user', 'content': 'What is 2 + 2?'}],
+ [{'role': 'system', 'content': "<Replace this with your desired system msg>"},
+  {'role': 'user', 'content': '<Replace this with your desired user msg>'}],
 
-  ...
+ ...
 ]
-
 ```
-### ThreadPoolExecutor for Parallel Requests:
 
-Utilizes `ThreadPoolExecutor` to send multiple requests in parallel, significantly speeding up the process when dealing with a large number of requests.
+### Sample Class Usage
 
-With `max_workers` you can set a rate limit to prevent overwhelming the API with too many simultaneous requests.
+Instantiate the APIRequestor class and call the get_responses_parallel method with your input data:
 
-[More info here](https://docs.python.org/3/library/concurrent.futures.html)
+```bash
+player = APIRequestor(model_name = "gpt-35-turbo", temperature = 1.0, max_tokens = 20, rate_limit = 100) 
+results = player.get_responses_parallel(message_sequences)
+results[:2]
+```
 
-### Semaphore for Rate Limiting:
+Each result is saved as a dictionary with input (the user's request message) and content (the response from the API), maintaining the relationship between each request and its corresponding response.
 
-A semaphore is used to enforce a maximum number of concurrent requests, as per the API's rate limit, preventing rate limit violations.
+```bash
+[{'input': 'What is 53 + 53?', 'content': '106'},
+ {'input': 'What is 100 + 100?', 'content': '200'}]
+```
 
-[More info here](https://docs.python.org/3/library/threading.html#semaphore-example)
+### Key Features
 
-### time.sleep for Request Spacing:
+- [ThreadPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html): Manages multiple requests in parallel, improving response time.
+- [Semaphore](https://docs.python.org/3/library/threading.html#semaphore-example): Controls the rate of API calls to comply with rate limits.
+- [Retry Mechanism](https://tenacity.readthedocs.io/en/latest/): Handles intermittent errors effectively by automatically retrying failed requests.
+- [Custom error handling](https://tenacity.readthedocs.io/en/latest/index.html?highlight=retry_error_callback#custom-callbacks): Provides a fallback mechanism that triggers after all retry attempts fail, allowing the process to proceed smoothly despite errors.
 
-After each request, the thread pauses (using `time.sleep(60 / self.rate_limit)`) to evenly distribute requests over time, aligning with the permitted rate limit.
+## Related Projects
 
-### Retry Mechanism:
+While other projects provide mechanisms to interact with OpenAI's API, this project focuses on simplicity and ease of use, especially for users new to parallel computing:
 
-Implements a retry mechanism for requests that fail due to recoverable errors, using a combination of fixed and random wait times between retries to avoid immediate repeat failures.
+This Script [openai-cookbook/examples/api_request_parallel_processor.py](https://github.com/openai/openai-cookbook/blob/970d8261fbf6206718fe205e88e37f4745f9cf76/examples/api_request_parallel_processor.py) is well-suited for making parallel requests to the OpenAI API. However, it can be complex and cumbersome for scenarios where one wants to just send a lot of prompts that are already prepared simultaneously. This project aims to streamline and simplify that process.
 
-[More info here](https://tenacity.readthedocs.io/en/latest/)
-### Error Handling:
 
-Custom error handling logic (`handle_retry_error`) provides a fallback action after all retry attempts fail (`return None`), ensuring the process can continue.
 
-A try-except block catches and handles `json.JSONDecodeError` to manage responses that do not return valid JSON, attempting retries as necessary.
+## Credits
 
-### Result Formatting and Association:
+Special thanks to the Max Planck Institute for Human Development, Center for Humans & Machines for providing the Azure OpenAI API endpoint that facilitated the development of this project.
 
-Each result is saved as a dictionary with `input` (the user's request message) and `content` (the response from the API), maintaining a clear association between the input and its corresponding output to that even though requests are processed in parallel, the relationship between requests and responses is preserved.
+For more information on their work and further research, please visit their [GitHub](https://github.com/center-for-humans-and-machines) and [official website](https://www.mpib-berlin.mpg.de/chm).
+
