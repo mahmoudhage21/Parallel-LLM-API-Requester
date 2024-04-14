@@ -3,3 +3,4 @@ tenacity
 notebook
 ipykernel
 pandas
+tiktoken
