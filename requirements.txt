@@ -1,4 +1,4 @@
-openai==1.14.3
+openai
 tenacity
 notebook
 ipykernel
