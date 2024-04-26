@@ -4,7 +4,7 @@ This project simplifies making parallel requests to the Azure OpenAI API for cha
 
 
 
-This project efficiently manages rate limits and incorporates robust error handling to streamline processing multiple inputs simultaneously. Unlike the official OpenAI parallel implementation, which can be complex and cumbersome for beginners, this project offers a simplified, easy-to-understand approach.
+This project efficiently manages rate limits (Requests RPM & Tokens TRM) and incorporates robust error handling to streamline processing multiple inputs simultaneously. Unlike the official OpenAI parallel implementation, which can be complex and cumbersome for beginners, this project offers a simplified, easy-to-understand approach, using libraries such as tenacity and threading.
 
 ## Example
 
@@ -55,7 +55,7 @@ To use this implementation, structure your input data as follows and utilize the
 Instantiate the APIRequester class and call the get_responses_parallel method with your input data:
 
 ```bash
-gpt35_turbo_api = APIRequester(model_name = "gpt-35-turbo", temperature = 1.0, max_tokens = 20, rate_limit = 100) 
+gpt35_turbo_api = APIRequester(model_name = "gpt-35-turbo", temperature = 1.0, max_tokens = 20, rate_limit = 100, token_rate_limit = 10000)  
 results = gpt35_turbo_api.get_responses_parallel(message_sequences)
 results[:2]
 ```
@@ -76,7 +76,7 @@ Each result is saved as a dictionary with input (the user's request message) and
 
 ## Related Projects
 
-While other projects provide mechanisms to interact with OpenAI's API, this project focuses on simplicity and ease of use, especially for users new to parallel computing:
+While other projects provide mechanisms to interact with OpenAI's API, this project utilises libraries such as tenacity and threading, focusing on simplicity and ease of use, especially for users new to parallel computing.
 
 This Script [openai-cookbook/examples/api_request_parallel_processor.py](https://github.com/openai/openai-cookbook/blob/970d8261fbf6206718fe205e88e37f4745f9cf76/examples/api_request_parallel_processor.py) is well-suited for making parallel requests to the OpenAI API. However, it can be complex and cumbersome for scenarios where one wants to just send a lot of prompts that are already prepared simultaneously. This project aims to streamline and simplify that process.
 
