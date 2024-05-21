@@ -1,5 +1,13 @@
 # Azure OpenAI Parallel Requests Handler
 
+### New features to be added soon:
+1. switch from notebook to scritps
+2. choose a provider: Azure / OpenAI
+3. set a budget to stop generating once its reached
+4. print cost every N requests are completed
+5. add many asserts to capture errors before running the API
+
+
 This project simplifies making parallel requests to the Azure OpenAI API for chat completions of scenarios where one needs to batch process a large number of **prepared prompts simultaneously**.
 
 
